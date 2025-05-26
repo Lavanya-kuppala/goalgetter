@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GoalGetter - Fitness & Fat Loss Planner</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://images.unsplash.com/photo-1598970434795-0c54fe7c0642?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      padding: 40px 20px;
+      margin: 0;
+      min-height: 100vh;
+      position: relative;
+    }
+    /* Dark overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: -1;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 25px;
+      color: #4CAF50;
+      text-align: center;
+      text-shadow: 0 0 8px #4caf50;
+    }
+    .section {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 25px 30px;
+      border-radius: 15px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 0 15px #4CAF50;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(76,175,80,0.6);
+    }
+    button:hover {
+      background-color: #3da63f;
+      box-shadow: 0 6px 18px rgba(61,166,63,0.8);
+    }
+    #results {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 15px;
+      font-weight: 600;
+      line-height: 1.6;
+      margin-top: 30px;
+      box-shadow: 0 0 10px #4caf50;
+    }
+    ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+    .step-title {
+      color: #a5d6a7;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 5px #4caf50;
+    }
+    @media (max-width: 640px) {
+      body {
+        padding: 20px 10px;
+      }
+      .section {
+        max-width: 100%;
+        padding: 20px;
+        margin: 15px 0;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GoalGetter - Fitness & Fat Loss Planner</h1>
+
+  <div class="section">
+    <label for="age">Age</label>
+    <input type="number" id="age" min="10" max="80" placeholder="Enter your age" />
+
+    <label for="gender">Gender</label>
+    <select id="gender">
+      <option value="" disabled selected>Select gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+
+    <label for="height">Height (cm)</label>
+    <input type="number" id="height" min="100" max="250" placeholder="Enter your height in cm" />
+
+    <label for="weight">Weight (kg)</label>
+    <input type="number" id="weight" min="30" max="200" placeholder="Enter your weight in kg" />
+
+    <label for="activity">Activity Level</label>
+    <select id="activity">
+      <option value="" disabled selected>Select activity level</option>
+      <option value="1.2">Sedentary (little or no exercise)</option>
+      <option value="1.375">Lightly active (1-3 days/week)</option>
+      <option value="1.55">Moderately active (3-5 days/week)</option>
+      <option value="1.725">Very active (6-7 days/week)</option>
+      <option value="1.9">Extra active (very intense exercise)</option>
+    </select>
+
+    <label for="goal">Goal</label>
+    <select id="goal">
+      <option value="" disabled selected>Select your goal</option>
+      <option value="maintain">Maintain Weight</option>
+      <option value="fatloss">Fat Loss</option>
+      <option value="muscle">Muscle Gain</option>
+    </select>
+
+    <button onclick="calculatePlan()">Calculate</button>
+
+    <div id="results"></div>
+  </div>
+
+<script>
+  function calculatePlan() {
+    const age = parseInt(document.getElementById('age').value);
+    const gender = document.getElementById('gender').value;
+    const height = parseFloat(document.getElementById('height').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const activity = parseFloat(document.getElementById('activity').value);
+    const goal = document.getElementById('goal').value;
+
+    if (!age || !gender || !height || !weight || !activity || !goal) {
+      alert('Please fill all fields!');
+      return;
+    }
+
+    // Calculate BMR using Mifflin-St Jeor Equation
+    let bmr;
+    if (gender === 'male') {
+      bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+
+    // Maintenance calories
+    const maintenanceCalories = Math.round(bmr * activity);
+
+    // Adjust calories based on goal
+    let goalCalories = maintenanceCalories;
+    let proteinGrams, carbsGrams, fatGrams;
+
+    if (goal === 'fatloss') {
+      goalCalories = Math.round(maintenanceCalories * 0.74); // ~25% deficit
+      proteinGrams = Math.round(weight * 2.0); // 2g per kg bodyweight
+      fatGrams = Math.round((goalCalories * 0.25) / 9); // 25% calories from fat
+      carbsGrams = Math.round((goalCalories - (proteinGrams * 4) - (fatGrams * 9)) / 4);
+    } else if (goal === 'muscle') {
+      goalCalories = Math.round(maintenanceCalories * 1.15); // 15% surplus
+      proteinGrams = Math.round(weight * 2.2);
+      fatGrams = Math.round((goalCalories * 0.25) / 9);
+      carbsGrams = Math.round((goalCalories - (proteinGrams * 4) - (fatGrams * 9)) / 4);
+    } else {
+      // Maintain
+      proteinGrams = Math.round(weight * 1.5);
+      fatGrams = Math.round((goalCalories * 0.25) / 9);
+      carbsGrams = Math.round((goalCalories - (proteinGrams * 4) - (fatGrams * 9)) / 4);
+    }
+
+    // Nutrition sources
+    const proteinSources = "Eggs, Chicken, Soya, Paneer, Lentils";
+    const carbSources = "Oats, Rice, Roti, Fruits, Veggies";
+    const fatSources = "Nuts, Seeds, Ghee, Coconut Oil";
+
+    // Workout suggestions
+    const workoutGym = "Push Pull Legs (6 Days)";
+    const workoutHome = "15-min HIIT + Core (Crunches, Planks, Lunges)";
+    const walk = "8,000–10,000 steps/day";
+
+    // Lifestyle tips
+    const sleep = "Sleep 7–8 hours daily";
+    const hydration = "Stay hydrated (2–3L/day)";
+    const consistency = "Stay consistent & track progress weekly";
+
+    // Build the output HTML
+    const resultsHTML = `
+      <div class="step-title">Step 2: Your Fitness Plan</div>
+      <p>Maintenance Calories: <strong>${maintenanceCalories} kcal/day</strong><br/>
+      Goal Calories (${goal === 'fatloss' ? 'fat loss' : goal === 'muscle' ? 'muscle gain' : 'maintain weight'}): <strong>${goalCalories} kcal/day</strong></p>
+      
+      <p><strong>Macros:</strong></p>
+      <ul>
+        <li>Protein: ${proteinGrams}g</li>
+        <li>Carbs: ${carbsGrams}g</li>
+        <li>Fat: ${fatGrams}g</li>
+      </ul>
+
+      <div class="step-title">Step 3: Nutrition Sources</div>
+      <ul>
+        <li><strong>Protein:</strong> ${proteinSources}</li>
+        <li><strong>Carbs:</strong> ${carbSources}</li>
+        <li><strong>Fats:</strong> ${fatSources}</li>
+      </ul>
+
+      <div class="step-title">Step 4: Workout Plan</div>
+      <ul>
+        <li><strong>Gym:</strong> ${workoutGym}</li>
+        <li><strong>Home:</strong> ${workoutHome}</li>
+        <li><strong>Walk:</strong> ${walk}</li>
+      </ul>
+
+      <div class="step-title">Step 5: Lifestyle Advice</div>
+      <ul>
+        <li>💤 ${sleep}</li>
+        <li>💧 ${hydration}</li>
+        <li>📋 ${consistency}</li>
+      </ul>
+    `;
+
+    document.getElementById('results').innerHTML = resultsHTML;
+  }
+</script>
+
+</body>
+</html>
